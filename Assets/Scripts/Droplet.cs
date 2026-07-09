@@ -21,6 +21,12 @@ public class Droplet : MonoBehaviour, IColorEntity
     private Transform currentTarget; // A quién está persiguiendo/atacando ahora mismo
     private float lastAttackTime;
 
+
+    // Evento ESTÁTICO: se dispara cada vez que CUALQUIER gota en la escena muere.
+    // Al ser estático, el Spawner puede escucharlo sin necesitar una referencia
+    // a cada gota individual.
+    public static event System.Action OnAnyDropletDeath;
+
     private void Awake()
     {
         health = GetComponent<Health>();
@@ -53,6 +59,11 @@ public class Droplet : MonoBehaviour, IColorEntity
         {
             TryAttack(currentTarget);
         }
+    }
+
+    public void SetColor(DropletColor newColor)
+    {
+        color = newColor;
     }
 
     // Busca el enemigo hostil más cercano (jugador o gota de color distinto) dentro del radio de detección
@@ -116,8 +127,16 @@ public class Droplet : MonoBehaviour, IColorEntity
     {
         if (dropPrefab != null)
         {
-            Instantiate(dropPrefab, transform.position, Quaternion.identity);
+            GameObject dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
+            DropletPickup pickup = dropInstance.GetComponent<DropletPickup>();
+            if (pickup != null)
+            {
+                pickup.SetColor(color);
+            }
         }
+
+        OnAnyDropletDeath?.Invoke(); //  avisa globalmente que una gota murió
+        Destroy(gameObject);
     }
 
     // Dibuja el radio de detección en la escena (solo visible en el Editor, no en el juego)

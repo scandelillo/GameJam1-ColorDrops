@@ -26,18 +26,17 @@ public class Health : MonoBehaviour, IDamageable
         if (amount <= 0f) return;
 
         currentHealth -= amount;
-
+        Debug.Log($"{gameObject.name} recibió {amount} de daño. Vida restante: {currentHealth}");
         if (currentHealth <= 0f)
         {
             Die();
         }
 
-        Debug.Log("tienes " + currentHealth);
+        
     }
 
     private void Die()
     {
         OnDeath?.Invoke(); // Avisa a quien esté escuchando (ej: Droplet.cs) que este objeto murió
-        Destroy(gameObject);
     }
 }

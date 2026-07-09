@@ -172,6 +172,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchRed"",
+                    ""type"": ""Button"",
+                    ""id"": ""d8a600b3-2611-4733-866d-3bb30d948b14"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchGreen"",
+                    ""type"": ""Button"",
+                    ""id"": ""d820671a-adb9-4983-886a-94449dd83a9f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchBlue"",
+                    ""type"": ""Button"",
+                    ""id"": ""ede2c8ad-8565-497f-9599-2cddf861b395"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -336,6 +363,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Joystick"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cfc40023-5c33-45e5-baba-0b0bd6288332"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -557,6 +595,39 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""079623b6-5363-4cb0-8806-3dbc77716760"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchRed"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ed6105c-9483-45ef-906b-3462e17a1561"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchGreen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""09c1c7c5-d962-4d14-a2ae-44f7c7530e7b"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchBlue"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1153,6 +1224,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Previous = m_Player.FindAction("Previous", throwIfNotFound: true);
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+        m_Player_SwitchRed = m_Player.FindAction("SwitchRed", throwIfNotFound: true);
+        m_Player_SwitchGreen = m_Player.FindAction("SwitchGreen", throwIfNotFound: true);
+        m_Player_SwitchBlue = m_Player.FindAction("SwitchBlue", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1255,6 +1329,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Previous;
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_Sprint;
+    private readonly InputAction m_Player_SwitchRed;
+    private readonly InputAction m_Player_SwitchGreen;
+    private readonly InputAction m_Player_SwitchBlue;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1302,6 +1379,18 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Sprint".
         /// </summary>
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SwitchRed".
+        /// </summary>
+        public InputAction @SwitchRed => m_Wrapper.m_Player_SwitchRed;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SwitchGreen".
+        /// </summary>
+        public InputAction @SwitchGreen => m_Wrapper.m_Player_SwitchGreen;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SwitchBlue".
+        /// </summary>
+        public InputAction @SwitchBlue => m_Wrapper.m_Player_SwitchBlue;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1355,6 +1444,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @SwitchRed.started += instance.OnSwitchRed;
+            @SwitchRed.performed += instance.OnSwitchRed;
+            @SwitchRed.canceled += instance.OnSwitchRed;
+            @SwitchGreen.started += instance.OnSwitchGreen;
+            @SwitchGreen.performed += instance.OnSwitchGreen;
+            @SwitchGreen.canceled += instance.OnSwitchGreen;
+            @SwitchBlue.started += instance.OnSwitchBlue;
+            @SwitchBlue.performed += instance.OnSwitchBlue;
+            @SwitchBlue.canceled += instance.OnSwitchBlue;
         }
 
         /// <summary>
@@ -1393,6 +1491,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @SwitchRed.started -= instance.OnSwitchRed;
+            @SwitchRed.performed -= instance.OnSwitchRed;
+            @SwitchRed.canceled -= instance.OnSwitchRed;
+            @SwitchGreen.started -= instance.OnSwitchGreen;
+            @SwitchGreen.performed -= instance.OnSwitchGreen;
+            @SwitchGreen.canceled -= instance.OnSwitchGreen;
+            @SwitchBlue.started -= instance.OnSwitchBlue;
+            @SwitchBlue.performed -= instance.OnSwitchBlue;
+            @SwitchBlue.canceled -= instance.OnSwitchBlue;
         }
 
         /// <summary>
@@ -1756,6 +1863,27 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSprint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchRed" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchRed(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchGreen" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchGreen(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchBlue" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchBlue(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
