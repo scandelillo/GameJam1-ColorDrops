@@ -71,7 +71,7 @@ public class DropletSpawner : MonoBehaviour
         {
             chosen = (DropletColor)Random.Range(0, 3);
         }
-        while (chosen == playerColor.Color);
+        while (chosen == playerColor.DColor);
 
         return chosen;
     }
@@ -174,4 +174,6 @@ public class DropletSpawner : MonoBehaviour
             droplet.SetColor(color);
         }
     }
+
+
 }

@@ -5,36 +5,60 @@ public class Droplet : MonoBehaviour, IColorEntity
 {
     [Header("Identidad")]
     [SerializeField] private DropletColor color;
-    public DropletColor Color => color; // Exponemos el color de solo lectura (cumple IColorEntity)
+    public DropletColor DColor => color;
 
     [Header("Movimiento e IA")]
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float detectionRadius = 5f; // Qué tan lejos "ve" a sus enemigos
-    [SerializeField] private float attackRange = 1f;      // Qué tan cerca necesita estar para atacar
+    [SerializeField] private float detectionRadius = 5f;
+    [SerializeField] private float attackRange = 2.5f;
     [SerializeField] private float attackCooldown = 1f;
     [SerializeField] private float baseDamage = 10f;
 
     [Header("Drop al morir")]
-    [SerializeField] private GameObject dropPrefab; // El objeto recolectable que suelta
+    [SerializeField] private GameObject dropPrefab;
+
+    [Header("Visual - Texture Array")]
+    [SerializeField] private Renderer bodyRenderer;
+    [SerializeField] private float colorTransitionSpeed = 2f;
 
     private Health health;
-    private Transform currentTarget; // A quién está persiguiendo/atacando ahora mismo
+    private Transform currentTarget;
     private float lastAttackTime;
+    private Material materialInstance;
 
+    // IDs de las propiedades del shader
+    private int fromIndexId;
+    private int toIndexId;
+    private int blendId;
 
-    // Evento ESTÁTICO: se dispara cada vez que CUALQUIER gota en la escena muere.
-    // Al ser estático, el Spawner puede escucharlo sin necesitar una referencia
-    // a cada gota individual.
+    private int currentColorIndex;
+    private bool isTransitioning;
+
     public static event System.Action OnAnyDropletDeath;
 
     private void Awake()
     {
         health = GetComponent<Health>();
+
+        if (bodyRenderer == null)
+            bodyRenderer = GetComponentInChildren<Renderer>();
+
+        // Obtener IDs de las propiedades
+        fromIndexId = Shader.PropertyToID("_FromIndex");
+        toIndexId = Shader.PropertyToID("_ToIndex");
+        blendId = Shader.PropertyToID("_Blend");
+
+        // Crear instancia del material
+        if (bodyRenderer != null)
+        {
+            materialInstance = bodyRenderer.material;
+            // Inicializar con el color actual
+            SetColorInstant((int)color);
+        }
     }
 
     private void OnEnable()
     {
-        // Nos suscribimos a nuestra propia muerte para saber cuándo spawnear el drop
         health.OnDeath.AddListener(HandleDeath);
     }
 
@@ -50,6 +74,7 @@ public class Droplet : MonoBehaviour, IColorEntity
         if (currentTarget == null) return;
 
         float distance = Vector3.Distance(transform.position, currentTarget.position);
+        Debug.Log($"🎯 Persiguiendo a {currentTarget.name}, distancia: {distance}");
 
         if (distance > attackRange)
         {
@@ -57,6 +82,8 @@ public class Droplet : MonoBehaviour, IColorEntity
         }
         else
         {
+
+            Debug.Log("⚔️ ¡Enemigo en rango de ataque!");
             TryAttack(currentTarget);
         }
     }
@@ -64,12 +91,26 @@ public class Droplet : MonoBehaviour, IColorEntity
     public void SetColor(DropletColor newColor)
     {
         color = newColor;
+
+        // Cambiar color instantáneamente usando el índice del enum
+        SetColorInstant((int)color);
     }
 
-    // Busca el enemigo hostil más cercano (jugador o gota de color distinto) dentro del radio de detección
+    // Cambio instantáneo de color
+    private void SetColorInstant(int colorIndex)
+    {
+        if (materialInstance == null) return;
+
+        currentColorIndex = colorIndex;
+
+        // Establecer From y To al mismo índice, Blend en 0
+        materialInstance.SetFloat(fromIndexId, colorIndex);
+        materialInstance.SetFloat(toIndexId, colorIndex);
+        materialInstance.SetFloat(blendId, 0f);
+    }
+
     private void FindTarget()
     {
-        // Physics.OverlapSphere devuelve todos los colliders dentro de un radio
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius);
 
         float closestDistance = Mathf.Infinity;
@@ -77,12 +118,9 @@ public class Droplet : MonoBehaviour, IColorEntity
 
         foreach (Collider hit in hits)
         {
-            // Buscamos si el objeto detectado tiene un color (IColorEntity)
             IColorEntity otherColorEntity = hit.GetComponent<IColorEntity>();
-            if (otherColorEntity == null) continue; // No es una gota ni el jugador, lo ignoramos
-
-            // Si es del mismo color, no es hostil, lo ignoramos
-            if (otherColorEntity.Color == color) continue;
+            if (otherColorEntity == null) continue;
+            if (otherColorEntity.DColor == color) continue;
 
             float distance = Vector3.Distance(transform.position, hit.transform.position);
             if (distance < closestDistance)
@@ -98,16 +136,19 @@ public class Droplet : MonoBehaviour, IColorEntity
     private void MoveTowards(Vector3 targetPosition)
     {
         Vector3 direction = (targetPosition - transform.position);
-        direction.y = 0f; // Evitamos que la gota intente moverse en el eje vertical
+        direction.y = 0f;
         direction.Normalize();
 
         transform.position += direction * moveSpeed * Time.deltaTime;
-        transform.forward = direction; // La gota mira hacia donde se mueve
+
+        if (direction != Vector3.zero)
+        {
+            transform.forward = direction;
+        }
     }
 
     private void TryAttack(Transform target)
     {
-        // Respetamos el cooldown para no atacar cada frame
         if (Time.time < lastAttackTime + attackCooldown) return;
 
         IDamageable damageable = target.GetComponent<IDamageable>();
@@ -115,14 +156,12 @@ public class Droplet : MonoBehaviour, IColorEntity
 
         if (damageable == null || targetColorEntity == null) return;
 
-        // Calculamos el daño real según la tabla de efectividad de colores
-        float multiplier = ColorEffectiveness.GetMultiplier(color, targetColorEntity.Color);
+        float multiplier = ColorEffectiveness.GetMultiplier(color, targetColorEntity.DColor);
         damageable.TakeDamage(baseDamage * multiplier);
 
         lastAttackTime = Time.time;
     }
 
-    // Se llama automáticamente cuando Health dispara OnDeath
     private void HandleDeath()
     {
         if (dropPrefab != null)
@@ -135,14 +174,17 @@ public class Droplet : MonoBehaviour, IColorEntity
             }
         }
 
-        OnAnyDropletDeath?.Invoke(); //  avisa globalmente que una gota murió
+        OnAnyDropletDeath?.Invoke();
+
+        if (materialInstance != null)
+            Destroy(materialInstance);
+
         Destroy(gameObject);
     }
 
-    // Dibuja el radio de detección en la escena (solo visible en el Editor, no en el juego)
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = UnityEngine.Color.yellow;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }

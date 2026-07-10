@@ -5,9 +5,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerColor : MonoBehaviour, IColorEntity
 {
-    [Header("Color inicial")]
+    [Header("DColor inicial")]
     [SerializeField] private DropletColor currentColor = DropletColor.Red;
-    public DropletColor Color => currentColor;
+    public DropletColor DColor => currentColor;
 
     public UnityEvent<DropletColor> OnColorChanged;
 
@@ -15,6 +15,30 @@ public class PlayerColor : MonoBehaviour, IColorEntity
     private HashSet<DropletColor> unlockedColors = new HashSet<DropletColor>();
 
     private InputSystem_Actions controls;
+
+
+    [Header("Animación")]
+    [SerializeField] private DroppyAnimationController droppy;
+
+
+    [System.Serializable]
+    public class ColorIndexMapping
+    {
+        public DropletColor color;
+        public int droppyIndex;
+    }
+    [SerializeField] private List<ColorIndexMapping> colorIndexMap;
+
+    private int GetDroppyIndex(DropletColor color)
+    {
+        foreach (var mapping in colorIndexMap)
+        {
+            if (mapping.color == color) return mapping.droppyIndex;
+        }
+        Debug.LogWarning($"No hay mapeo configurado para {color}");
+        return 0;
+    }
+
 
     private void Awake()
     {
@@ -58,15 +82,11 @@ public class PlayerColor : MonoBehaviour, IColorEntity
     // Cambia el color actual, solo si ya está desbloqueado
     private void TrySetColor(DropletColor newColor)
     {
-        if (!unlockedColors.Contains(newColor))
-        {
-            Debug.Log($"Todavía no desbloqueas el color {newColor}");
-            return;
-        }
-
-        if (newColor == currentColor) return; // Ya estás en ese color, no hacemos nada
+        if (!unlockedColors.Contains(newColor)) return;
+        if (newColor == currentColor) return;
 
         currentColor = newColor;
+        droppy.SwitchColorTo(GetDroppyIndex(newColor)); // nuevo: cambia el color visual con fundido
         OnColorChanged?.Invoke(currentColor);
     }
 }

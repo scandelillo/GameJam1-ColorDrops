@@ -18,6 +18,9 @@ public class PlayerCombat : MonoBehaviour
     private PlayerColor playerColor;
     private PlayerInventory inventory;
 
+    [Header("Animación")]
+    [SerializeField] private DroppyAnimationController droppy;
+
     private void Awake()
     {
         controls = new InputSystem_Actions();
@@ -44,34 +47,61 @@ public class PlayerCombat : MonoBehaviour
 
     private void Attack()
     {
+        Debug.Log("=== ⚔️ ATAQUE DEL JUGADOR ===");
+
         float totalDamage;
 
-        // Intentamos gastar las gotas del costo del ataque
+        if (droppy != null)
+            droppy.Attack();
+
         if (inventory.TrySpendDroplets(dropletsCostPerAttack))
         {
-            // Si tenías suficientes, el ataque sale con el bono de daño
-            // (usamos el conteo actual + lo que ya gastamos, igual que antes)
             totalDamage = baseDamage + ((inventory.DropletCount + dropletsCostPerAttack) * damagePerDroplet);
         }
         else
         {
-            // Si no tenías suficientes gotas, el ataque igual se ejecuta,
-            // pero solo con el daño base, sin bono y sin gastar nada
             totalDamage = baseDamage;
         }
 
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward, attackRange, droplerLayer);
+        Debug.Log($"💰 Daño calculado: {totalDamage}");
+
+        // ✅ CORREGIDO: Detectar alrededor del jugador
+        Collider[] hits = Physics.OverlapSphere(transform.position, attackRange, droplerLayer);
+
+        Debug.Log($"📡 Enemigos detectados: {hits.Length} en un radio de {attackRange} alrededor del jugador");
 
         foreach (Collider hit in hits)
         {
+            Debug.Log($"🎯 Hit: {hit.gameObject.name} (Layer: {LayerMask.LayerToName(hit.gameObject.layer)})");
+
             IColorEntity targetColorEntity = hit.GetComponent<IColorEntity>();
             IDamageable damageable = hit.GetComponent<IDamageable>();
 
-            if (targetColorEntity == null || damageable == null) continue;
-            if (targetColorEntity.Color == playerColor.Color) continue;
+            if (targetColorEntity == null)
+            {
+                Debug.Log($"❌ {hit.gameObject.name} NO tiene IColorEntity");
+                continue;
+            }
+            if (damageable == null)
+            {
+                Debug.Log($"❌ {hit.gameObject.name} NO tiene IDamageable");
+                continue;
+            }
 
-            float multiplier = ColorEffectiveness.GetMultiplier(playerColor.Color, targetColorEntity.Color);
-            damageable.TakeDamage(totalDamage * multiplier);
+            Debug.Log($"🎨 Color del enemigo: {targetColorEntity.DColor}");
+            Debug.Log($"🎨 Color del jugador: {playerColor.DColor}");
+
+            if (targetColorEntity.DColor == playerColor.DColor)
+            {
+                Debug.Log($"❌ Mismo color, ignorando");
+                continue;
+            }
+
+            float multiplier = ColorEffectiveness.GetMultiplier(playerColor.DColor, targetColorEntity.DColor);
+            float finalDamage = totalDamage * multiplier;
+
+            Debug.Log($"💥 Aplicando {finalDamage} de daño (multiplicador: {multiplier})");
+            damageable.TakeDamage(finalDamage);
         }
     }
 }

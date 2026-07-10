@@ -14,25 +14,41 @@ public class Health : MonoBehaviour, IDamageable
     // sin que Health.cs necesite saber nada sobre drops.
     public UnityEvent OnDeath;
 
+    public UnityEvent OnDamaged;
+
     private void Awake()
     {
         currentHealth = maxHealth;
     }
 
     // Implementación de IDamageable: reduce la salud y revisa si murió
+    //public void TakeDamage(float amount)
+    //{
+    //    if (amount <= 0f) return;
+
+    //    currentHealth -= amount;
+    //    OnDamaged?.Invoke(); // Avisa que recibió daño, sin importar si murió o no
+
+    //    if (currentHealth <= 0f)
+    //    {
+    //        Die();
+    //    }
+    //}
+
     public void TakeDamage(float amount)
     {
-        // Si el multiplicador de efectividad fue 0 (mismo color), no hacemos nada
+        Debug.Log($"💥 {gameObject.name} recibe {amount} de daño. Salud actual: {currentHealth}/{maxHealth}");
+
         if (amount <= 0f) return;
 
         currentHealth -= amount;
-        Debug.Log($"{gameObject.name} recibió {amount} de daño. Vida restante: {currentHealth}");
+        OnDamaged?.Invoke();
+
         if (currentHealth <= 0f)
         {
+            Debug.Log($"💀 {gameObject.name} ha muerto");
             Die();
         }
-
-        
     }
 
     private void Die()

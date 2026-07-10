@@ -4,5 +4,5 @@
 // si está pegando a una gota o al jugador: solo pregunta "¿de qué color eres?"
 public interface IColorEntity
 {
-    DropletColor Color { get; }
+    DropletColor DColor { get; }
 }
