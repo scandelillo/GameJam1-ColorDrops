@@ -21,25 +21,6 @@ public class PlayerColor : MonoBehaviour, IColorEntity
     [SerializeField] private DroppyAnimationController droppy;
 
 
-    [System.Serializable]
-    public class ColorIndexMapping
-    {
-        public DropletColor color;
-        public int droppyIndex;
-    }
-    [SerializeField] private List<ColorIndexMapping> colorIndexMap;
-
-    private int GetDroppyIndex(DropletColor color)
-    {
-        foreach (var mapping in colorIndexMap)
-        {
-            if (mapping.color == color) return mapping.droppyIndex;
-        }
-        Debug.LogWarning($"No hay mapeo configurado para {color}");
-        return 0;
-    }
-
-
     private void Awake()
     {
         controls = new InputSystem_Actions();
@@ -48,27 +29,27 @@ public class PlayerColor : MonoBehaviour, IColorEntity
         unlockedColors.Add(currentColor);
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        controls.Player.Enable();
-
-        // Cada tecla (1, 2, 3) intenta cambiar a un color específico
-        controls.Player.SwitchRed.performed += OnSwitchRed;
-        controls.Player.SwitchGreen.performed += OnSwitchGreen;
-        controls.Player.SwitchBlue.performed += OnSwitchBlue;
+        // Pintamos el material con el color lógico inicial.
+        // Lo hacemos en Start (no en Awake) para asegurar que el DroppyAnimationController
+        // ya creó su instancia de material.
+        if (droppy != null)
+            droppy.SetColorInstant((int)currentColor);
     }
 
-    private void OnDisable()
-    {
-        controls.Player.SwitchRed.performed -= OnSwitchRed;
-        controls.Player.SwitchGreen.performed -= OnSwitchGreen;
-        controls.Player.SwitchBlue.performed -= OnSwitchBlue;
-        controls.Player.Disable();
-    }
+    private void OnEnable() => controls.Player.Enable();
+    private void OnDisable() => controls.Player.Disable();
 
-    private void OnSwitchRed(InputAction.CallbackContext ctx) => TrySetColor(DropletColor.Red);
-    private void OnSwitchGreen(InputAction.CallbackContext ctx) => TrySetColor(DropletColor.Green);
-    private void OnSwitchBlue(InputAction.CallbackContext ctx) => TrySetColor(DropletColor.Blue);
+    // Leemos el input de cambio de color por polling, igual que el movimiento.
+    // WasPressedThisFrame() devuelve true solo en el frame en que se presiona la tecla.
+    private void Update()
+    {
+        // Tecla 1 -> Rojo, Tecla 2 -> Amarillo (la acción sigue llamándose "SwitchGreen"), Tecla 3 -> Azul.
+        if (controls.Player.SwitchRed.WasPressedThisFrame()) TrySetColor(DropletColor.Red);
+        if (controls.Player.SwitchGreen.WasPressedThisFrame()) TrySetColor(DropletColor.Yellow);
+        if (controls.Player.SwitchBlue.WasPressedThisFrame()) TrySetColor(DropletColor.Blue);
+    }
 
     // Llamado desde el pickup: agrega un color a la lista de desbloqueados
     // (no lo activa automáticamente, solo lo habilita para poder elegirlo después)
@@ -86,7 +67,9 @@ public class PlayerColor : MonoBehaviour, IColorEntity
         if (newColor == currentColor) return;
 
         currentColor = newColor;
-        droppy.SwitchColorTo(GetDroppyIndex(newColor)); // nuevo: cambia el color visual con fundido
+        // El valor del enum es directamente el índice del slice en el material
+        // (0=rojo, 1=amarillo, 2=azul), así que lo convertimos sin tabla de mapeo.
+        droppy.SwitchColorTo((int)newColor); // cambia el color visual con fundido
         OnColorChanged?.Invoke(currentColor);
     }
 }

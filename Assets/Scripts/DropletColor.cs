@@ -1,6 +1,6 @@
 public enum DropletColor
 {
     Red = 0,
-    Green = 1,
+    Yellow = 1,
     Blue = 2,
 }

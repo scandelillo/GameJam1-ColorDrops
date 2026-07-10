@@ -33,7 +33,19 @@ public class PlayerHealthHandler : MonoBehaviour
     private void HandlePlayerDeath()
     {
         droppy.Die();
-        GetComponent<PlayerMovement>().enabled = false;
+        // Al morir, apagamos el movimiento (el script real del jugador) y el combate.
+        GetComponent<PlayerMovementIsometric>().enabled = false;
         GetComponent<PlayerCombat>().enabled = false;
+        ActivarObjeto();
     }
+    void ActivarObjeto()
+    {
+    // Sintaxis correcta usando Find
+    GameObject miObjeto = GameObject.Find("Main Menu Button");
+
+    if (miObjeto != null)
+    {
+        miObjeto.SetActive(true);
+    }
+}
 }

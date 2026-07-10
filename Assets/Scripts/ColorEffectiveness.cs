@@ -19,10 +19,10 @@ public static class ColorEffectiveness
             return 0f;
         }
 
-        // Triángulo: Rojo > Verde > Azul > Rojo
+        // Triángulo: Rojo > Amarillo > Azul > Rojo
         bool isSuperEffective =
-            (attackerColor == DropletColor.Red && defenderColor == DropletColor.Green) ||
-            (attackerColor == DropletColor.Green && defenderColor == DropletColor.Blue) ||
+            (attackerColor == DropletColor.Red && defenderColor == DropletColor.Yellow) ||
+            (attackerColor == DropletColor.Yellow && defenderColor == DropletColor.Blue) ||
             (attackerColor == DropletColor.Blue && defenderColor == DropletColor.Red);
 
         if (isSuperEffective)

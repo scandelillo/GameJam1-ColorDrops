@@ -20,7 +20,14 @@ public class DropletSpawner : MonoBehaviour
 
     [Header("Zonas de spawn")]
     [SerializeField] private List<SpawnZone> spawnZones = new List<SpawnZone>();
-    [SerializeField] private float spawnHeightOffset = 1.0f; // Ajusta según el tamaño de tu gota
+
+    [Header("Alineación con el suelo")]
+    // Capa(s) consideradas "piso". Si se asigna, la gota se posa exactamente sobre ese collider.
+    [SerializeField] private LayerMask groundLayer;
+    // Altura desde la que se lanza el rayo hacia abajo para buscar el piso.
+    [SerializeField] private float groundRaycastStartHeight = 50f;
+    // Ajuste vertical fino según el pivote de la gota (0 = pivote en la base, apoyada en el piso).
+    [SerializeField] private float spawnHeightOffset = 0f;
 
     [Header("Límite global")]
     [SerializeField] private int maxAliveDroplets = 20;
@@ -157,12 +164,25 @@ public class DropletSpawner : MonoBehaviour
 
     // ---------- Utilidades ----------
 
-    // Devuelve una posición aleatoria dentro del círculo de una zona
+    // Devuelve una posición aleatoria dentro del círculo de una zona, posada sobre el piso.
     private Vector3 GetRandomPositionInZone(SpawnZone zone)
     {
+        // Punto aleatorio dentro del círculo, a la altura del centro de la zona.
         Vector2 randomCircle = Random.insideUnitCircle * zone.radius;
-        Vector3 offset = new Vector3(randomCircle.x, spawnHeightOffset, randomCircle.y);
-        return zone.center.position + offset;
+        Vector3 planarPos = zone.center.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
+
+        // Lanzamos un rayo hacia abajo desde bien arriba para encontrar el piso real
+        // y posar la gota justo encima. Ignora triggers (como los pickups).
+        Vector3 rayOrigin = planarPos + Vector3.up * groundRaycastStartHeight;
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit,
+                            groundRaycastStartHeight * 2f, groundLayer, QueryTriggerInteraction.Ignore))
+        {
+            return hit.point + Vector3.up * spawnHeightOffset;
+        }
+
+        // Fallback: si no se detectó piso (por ejemplo, sin capa asignada),
+        // usamos la altura del centro de la zona más el ajuste fino.
+        return planarPos + Vector3.up * spawnHeightOffset;
     }
 
     private void SpawnDroplet(Vector3 position, DropletColor color)

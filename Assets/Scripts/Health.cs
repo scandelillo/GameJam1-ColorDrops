@@ -8,6 +8,12 @@ public class Health : MonoBehaviour, IDamageable
     [SerializeField] private float maxHealth = 30f;
 
     private float currentHealth;
+    // 🔴 AGREGAMOS ESTO: Propiedades públicas para que la UI pueda leer los valores
+    public float MaxHealth => maxHealth;
+    public float CurrentHealth => currentHealth;
+
+    // 🔴 AGREGAMOS ESTO: Un evento que pasa la salud actual y la máxima
+    public UnityEvent<float, float> OnHealthChanged;
 
     // Evento que se dispara cuando este objeto muere.
     // Lo usamos para que Droplet.cs sepa cuándo debe spawnear el drop,
@@ -42,6 +48,10 @@ public class Health : MonoBehaviour, IDamageable
         if (amount <= 0f) return;
 
         currentHealth -= amount;
+
+// 🔴 INVOCAMOS EL NUEVO EVENTO pasándole la vida actual y la máxima
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
         OnDamaged?.Invoke();
 
         if (currentHealth <= 0f)
