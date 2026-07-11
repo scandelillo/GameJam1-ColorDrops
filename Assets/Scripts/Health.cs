@@ -1,68 +1,102 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-// Componente genérico de salud. Se puede poner tanto en el jugador como en las gotas.
-public class Health : MonoBehaviour, IDamageable
+// Componente de vida genérico. Lo usan tanto el jugador como los enemigos.
+public class Health : MonoBehaviour
 {
-    [Header("Salud")]
-    [SerializeField] private float maxHealth = 30f;
+    [Header("Vida")]
+    // Vida máxima con la que arranca la entidad.
+    [SerializeField] private float vidaMaxima = 100f;
 
-    private float currentHealth;
-    // 🔴 AGREGAMOS ESTO: Propiedades públicas para que la UI pueda leer los valores
-    public float MaxHealth => maxHealth;
-    public float CurrentHealth => currentHealth;
+    [Header("Referencias")]
+    // Visual del modelo, para reproducir las animaciones de daño y muerte.
+    // Suele estar en el mismo objeto (raíz del FBX); se busca solo si se deja vacío.
+    [SerializeField] private DroppyAnimationController visual;
 
-    // 🔴 AGREGAMOS ESTO: Un evento que pasa la salud actual y la máxima
-    public UnityEvent<float, float> OnHealthChanged;
+    // Vida actual en runtime.
+    private float vidaActual;
+    // Una vez muerto, ignora cualquier daño o curación posterior.
+    private bool muerto;
 
-    // Evento que se dispara cuando este objeto muere.
-    // Lo usamos para que Droplet.cs sepa cuándo debe spawnear el drop,
-    // sin que Health.cs necesite saber nada sobre drops.
-    public UnityEvent OnDeath;
+    // Consultas públicas (útiles para la UI).
+    public float VidaMaxima => vidaMaxima;
+    public float VidaActual => vidaActual;
+    public bool EstaMuerto => muerto;
 
-    public UnityEvent OnDamaged;
+    // Eventos para que otros scripts reaccionen (animación, UI, soltar gota, etc.).
+    public UnityEvent AlMorir;                      // se dispara una sola vez, al morir
+    public UnityEvent AlRecibirDanio;               // se dispara cada vez que recibe daño
+    public UnityEvent<float, float> AlCambiarVida;  // (vidaActual, vidaMaxima) para la UI
 
     private void Awake()
     {
-        currentHealth = maxHealth;
+        // Empezamos con la vida llena.
+        vidaActual = vidaMaxima;
+
+        // Si no se asignó a mano, buscamos el visual en este objeto o sus hijos.
+        if (visual == null)
+            visual = GetComponentInChildren<DroppyAnimationController>();
     }
 
-    // Implementación de IDamageable: reduce la salud y revisa si murió
-    //public void TakeDamage(float amount)
-    //{
-    //    if (amount <= 0f) return;
-
-    //    currentHealth -= amount;
-    //    OnDamaged?.Invoke(); // Avisa que recibió daño, sin importar si murió o no
-
-    //    if (currentHealth <= 0f)
-    //    {
-    //        Die();
-    //    }
-    //}
-
-    public void TakeDamage(float amount)
+    // Aplica daño y comprueba si murió.
+    public void RecibirDanio(float cantidad)
     {
-        Debug.Log($"💥 {gameObject.name} recibe {amount} de daño. Salud actual: {currentHealth}/{maxHealth}");
+        // Si ya está muerto o el daño no es positivo, no hacemos nada.
+        if (muerto || cantidad <= 0f) return;
 
-        if (amount <= 0f) return;
+        // Restamos sin bajar de 0.
+        vidaActual = Mathf.Max(vidaActual - cantidad, 0f);
+        AlRecibirDanio?.Invoke();
+        AlCambiarVida?.Invoke(vidaActual, vidaMaxima);
 
-        currentHealth -= amount;
-
-// 🔴 INVOCAMOS EL NUEVO EVENTO pasándole la vida actual y la máxima
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
-
-        OnDamaged?.Invoke();
-
-        if (currentHealth <= 0f)
+        // Muerte: se marca antes de avisar para no volver a entrar.
+        if (vidaActual <= 0f)
         {
-            Debug.Log($"💀 {gameObject.name} ha muerto");
-            Die();
+            muerto = true;
+            // Animación de muerte.
+            if (visual != null)
+                visual.Die();
+            AlMorir?.Invoke();
+        }
+        else
+        {
+            // Sigue vivo: animación de recibir daño.
+            if (visual != null)
+                visual.Hurt();
         }
     }
 
-    private void Die()
+    // Daño "silencioso" (veneno de la pintura del suelo): baja la vida y puede matar,
+    // pero NO dispara la animación de daño ni el evento AlRecibirDanio.
+    // Así el veneno no interrumpe ataques, no empuja y no sacude la cámara;
+    // el feedback visual lo pone PaintPoison (contracción de escala).
+    public void RecibirDanioVeneno(float cantidad)
     {
-        OnDeath?.Invoke(); // Avisa a quien esté escuchando (ej: Droplet.cs) que este objeto murió
+        // Si ya está muerto o el daño no es positivo, no hacemos nada.
+        if (muerto || cantidad <= 0f) return;
+
+        // Restamos sin bajar de 0 y avisamos solo a la UI (no al resto del combate).
+        vidaActual = Mathf.Max(vidaActual - cantidad, 0f);
+        AlCambiarVida?.Invoke(vidaActual, vidaMaxima);
+
+        // La muerte por veneno sí se gestiona igual que la muerte normal.
+        if (vidaActual <= 0f)
+        {
+            muerto = true;
+            // Animación de muerte.
+            if (visual != null)
+                visual.Die();
+            AlMorir?.Invoke();
+        }
+    }
+
+    // Rellena vida sin pasar del máximo.
+    public void Curar(float cantidad)
+    {
+        // No se cura si está muerto o la cantidad no es positiva.
+        if (muerto || cantidad <= 0f) return;
+
+        vidaActual = Mathf.Min(vidaActual + cantidad, vidaMaxima);
+        AlCambiarVida?.Invoke(vidaActual, vidaMaxima);
     }
 }

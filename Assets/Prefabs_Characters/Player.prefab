@@ -10129,8 +10129,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2
-      minScalar: 0.06
+      scalar: 0.3
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -15059,8 +15059,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2
-      minScalar: 0.06
+      scalar: 0.3
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -24910,8 +24910,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2
-      minScalar: 0.06
+      scalar: 0.3
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -29563,15 +29563,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.22290133
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0000002298982
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.27851
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29579,15 +29579,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -29635,6 +29635,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2196539739041394321, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
@@ -29725,28 +29729,44 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1181759181095715961}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7762655509394526368}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7631206918165931624}
+      addedObject: {fileID: 7021008739112955237}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: -128759021829262019}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -3282158210886094467}
+      addedObject: {fileID: 1074573687114506249}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3117297948799436951}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4580429605365037300}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2744130192963095805}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2339093113307733161}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1785762614158121101}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5029525987579473501}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4831416474934316712}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1993533783966840919}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7486289001678068148}
   m_SourcePrefab: {fileID: 100100000, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
 --- !u!4 &1330828678999290203 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -19308525838330438, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
-  m_PrefabInstance: {fileID: 7909283423890613473}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &6437529167571223629 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3789174311226319020, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
   m_PrefabInstance: {fileID: 7909283423890613473}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &6990152387133413808 stripped
@@ -29754,7 +29774,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 57dc28959f88edd48ae58ec5ce9c51bf, type: 3}
   m_PrefabInstance: {fileID: 7909283423890613473}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1181759181095715961
+--- !u!95 &7021008739112955237
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -29776,47 +29796,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7762655509394526368
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6990152387133413808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e247d69fef2a30747962464d01118e71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DroppyAnimationController
-  animator: {fileID: 1181759181095715961}
-  bodyRenderer: {fileID: 6437529167571223629}
-  inflateBlendShapeName: Droppy_Inflated_BlendShape
-  colorTransitionSpeed: 2
-  startingColorIndex: 0
-  blendProperty: _Blend
-  fromIndexProperty: _FromIndex
-  toIndexProperty: _ToIndex
---- !u!114 &7631206918165931624
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6990152387133413808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b7b36c71d917f14a8541debf88891ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DroppyEffects
-  droppy: {fileID: 7762655509394526368}
-  hurtEffectsByColor:
-  - {fileID: 1615525525172146031}
-  - {fileID: 5310501435485869533}
-  - {fileID: 1816409210696441371}
-  deathEffectsByColor:
-  - {fileID: 2090578319519582496}
-  - {fileID: 4809750359097475538}
-  - {fileID: 6757832272086840257}
 --- !u!82 &-128759021829262019
 AudioSource:
   m_ObjectHideFlags: 0
@@ -29914,7 +29893,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-3282158210886094467
+--- !u!114 &1074573687114506249
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29923,9 +29902,61 @@ MonoBehaviour:
   m_GameObject: {fileID: 6990152387133413808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f5e620338eb38f4994e201b04dda18c, type: 3}
+  m_Script: {fileID: 11500000, guid: 063a77efe0145144dbb8bdc43ab55267, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DroppySFX
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  velocidad: 1.8
+  velocidadGiro: 12
+  visual: {fileID: 4580429605365037300}
+--- !u!114 &3117297948799436951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70198795179958e4ab9d0c2ce6906183, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityColor
+  colorActual: 0
+  conFundido: 1
+  visual: {fileID: 4580429605365037300}
+--- !u!114 &4580429605365037300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e247d69fef2a30747962464d01118e71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DroppyAnimationController
+  animator: {fileID: 0}
+  bodyRenderer: {fileID: 0}
+  attackLayer: 0
+  attackStateName: Droppy_Rig|Droppy_Attack
+  inflateBlendShapeName: Droppy_Inflated_BlendShape
+  colorTransitionSpeed: 2
+  startingColorIndex: 0
+  blendProperty: _Blend
+  fromIndexProperty: _FromIndex
+  toIndexProperty: _ToIndex
+--- !u!114 &2744130192963095805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665d30e4240009740b33c086c036da3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DroppyEffects
   audioSource: {fileID: -128759021829262019}
   attackClip: {fileID: 8300000, guid: c97d79394e4a7524abf7fc2f95fef40d, type: 3}
   dragClip: {fileID: 8300000, guid: 3e50e445e3c44fe4c89a7fe1ad051107, type: 3}
@@ -29936,3 +29967,114 @@ MonoBehaviour:
   maxPitch: 1.08
   minVolume: 0.7
   maxVolume: 1
+--- !u!114 &2339093113307733161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41276c55909b3754686ed70a37e732f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropletVFX
+  droppy: {fileID: 4580429605365037300}
+  hurtEffectsByColor:
+  - {fileID: 1615525525172146031}
+  - {fileID: 5310501435485869533}
+  - {fileID: 1816409210696441371}
+  deathEffectsByColor:
+  - {fileID: 2090578319519582496}
+  - {fileID: 4809750359097475538}
+  - {fileID: 6757832272086840257}
+--- !u!114 &1785762614158121101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 236c9d69bad124141ba8c2e73a1a5f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  vidaMaxima: 100
+  visual: {fileID: 4580429605365037300}
+  AlMorir:
+    m_PersistentCalls:
+      m_Calls: []
+  AlRecibirDanio:
+    m_PersistentCalls:
+      m_Calls: []
+  AlCambiarVida:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5029525987579473501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2221f47f50ba6364ba10912e1d058d8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  rangoAtaque: 2
+  danioBase: 16
+  capaEnemigos:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &4831416474934316712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c857b38680c05af4cae10b953bcfd4a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatState
+  tiempoConexion: 0.6
+  duracionAtaque: 0.7
+  cadenciaAtaque: 0.7
+  duracionAturdido: 0.3
+  distanciaEmpuje: 1.5
+  duracionEmpuje: 0.2
+  visual: {fileID: 4580429605365037300}
+--- !u!114 &1993533783966840919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173bfe30ec1a47a4c8e2fed6a861da24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PaintTrail
+  distanciaEntrePinceladas: 0.35
+  retrasoPincel: 0.6
+--- !u!114 &7486289001678068148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6990152387133413808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cbecbfaa7633e74888b99f3b17cbadc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PaintPoison
+  intervalo: 1.5
+  danioDebil: 1
+  danioFuerte: 2
+  escalaContraccion: 0.85
+  duracionContraccion: 0.22

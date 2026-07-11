@@ -1,107 +1,91 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerColor))]
-[RequireComponent(typeof(PlayerInventory))]
+// Ataque del jugador: al pulsar la tecla de ataque (Barra espaciadora) pide un
+// ataque a CombatState. El daño se aplica en el punto de conexión (frame 18),
+// golpeando a los enemigos dentro de un radio según el triángulo de color.
+[RequireComponent(typeof(EntityColor))]
+[RequireComponent(typeof(CombatState))]
 public class PlayerCombat : MonoBehaviour
 {
-    [Header("Combate")]
-    [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private LayerMask droplerLayer;
+    [Header("Ataque")]
+    // Radio del golpe alrededor del jugador.
+    [SerializeField] private float rangoAtaque = 2f;
+    // Daño base antes de aplicar el multiplicador de color.
+    [SerializeField] private float danioBase = 15f;
+    // Capa(s) donde están los enemigos (para no golpearse a sí mismo).
+    [SerializeField] private LayerMask capaEnemigos;
 
-    [Header("Daño")]
-    [SerializeField] private float baseDamage = 10f;
-    [SerializeField] private float damagePerDroplet = 0.5f; // Cuánto sube el daño por cada gota que tengas
-    [SerializeField] private int dropletsCostPerAttack = 1; // Cuántas gotas gasta cada ataque
-
-    private InputSystem_Actions controls;
-    private PlayerColor playerColor;
-    private PlayerInventory inventory;
-
-    [Header("Animación")]
-    [SerializeField] private DroppyAnimationController droppy;
+    // Input generado (New Input System).
+    private InputSystem_Actions controles;
+    // Color del jugador (para el multiplicador).
+    private EntityColor color;
+    // Máquina de estados: gestiona tiempos, bloqueo de movimiento e interrupción.
+    private CombatState combate;
 
     private void Awake()
     {
-        controls = new InputSystem_Actions();
-        playerColor = GetComponent<PlayerColor>();
-        inventory = GetComponent<PlayerInventory>();
+        controles = new InputSystem_Actions();
+        color = GetComponent<EntityColor>();
+        combate = GetComponent<CombatState>();
     }
 
     private void OnEnable()
     {
-        controls.Player.Enable();
-        controls.Player.Attack.performed += OnAttackPerformed;
+        controles.Player.Enable();
+        // El golpe se aplica cuando la animación conecta, no al pulsar.
+        combate.AlConectarAtaque += Golpear;
     }
 
     private void OnDisable()
     {
-        controls.Player.Attack.performed -= OnAttackPerformed;
-        controls.Player.Disable();
+        controles.Player.Disable();
+        combate.AlConectarAtaque -= Golpear;
     }
 
-    private void OnAttackPerformed(InputAction.CallbackContext ctx)
+    private void OnDestroy() => controles?.Dispose();
+
+    private void Update()
     {
-        Attack();
+        // Pedimos el ataque en el frame en que se pulsa la tecla.
+        // CombatState decide si procede (cadencia y estado) y anima.
+        if (controles.Player.Attack.WasPressedThisFrame())
+            combate.SolicitarAtaque();
     }
 
-    private void Attack()
+    // Se llama en el punto de conexión del ataque (frame 18): aplica el daño.
+    private void Golpear()
     {
-        Debug.Log("=== ⚔️ ATAQUE DEL JUGADOR ===");
+        // Buscamos enemigos dentro del rango (filtrando por su capa).
+        Collider[] golpeados = Physics.OverlapSphere(transform.position, rangoAtaque, capaEnemigos);
 
-        float totalDamage;
-
-        if (droppy != null)
-            droppy.Attack();
-
-        if (inventory.TrySpendDroplets(dropletsCostPerAttack))
+        foreach (Collider objetivo in golpeados)
         {
-            totalDamage = baseDamage + ((inventory.DropletCount + dropletsCostPerAttack) * damagePerDroplet);
+            // El enemigo debe tener color (EntityColor) y vida (Health).
+            EntityColor colorEnemigo = objetivo.GetComponent<EntityColor>();
+            Health vidaEnemigo = objetivo.GetComponent<Health>();
+            if (colorEnemigo == null || vidaEnemigo == null) continue;
+
+            // Si ya está muerto, no se le pega ni se le empuja (dejarlo agonizar en paz).
+            if (vidaEnemigo.EstaMuerto) continue;
+
+            // Daño según el triángulo: x2 fuerte, x0.5 débil, x0 mismo color.
+            float mult = ColorRules.Multiplicador(color.ColorActual, colorEnemigo.ColorActual);
+            // Mismo color: ni daño ni empuje.
+            if (mult <= 0f) continue;
+
+            vidaEnemigo.RecibirDanio(danioBase * mult);
+
+            // Empujamos al enemigo hacia atrás (lejos del jugador).
+            CombatState combateEnemigo = objetivo.GetComponent<CombatState>();
+            if (combateEnemigo != null)
+                combateEnemigo.Empujar(objetivo.transform.position - transform.position);
         }
-        else
-        {
-            totalDamage = baseDamage;
-        }
+    }
 
-        Debug.Log($"💰 Daño calculado: {totalDamage}");
-
-        // ✅ CORREGIDO: Detectar alrededor del jugador
-        Collider[] hits = Physics.OverlapSphere(transform.position, attackRange, droplerLayer);
-
-        Debug.Log($"📡 Enemigos detectados: {hits.Length} en un radio de {attackRange} alrededor del jugador");
-
-        foreach (Collider hit in hits)
-        {
-            Debug.Log($"🎯 Hit: {hit.gameObject.name} (Layer: {LayerMask.LayerToName(hit.gameObject.layer)})");
-
-            IColorEntity targetColorEntity = hit.GetComponent<IColorEntity>();
-            IDamageable damageable = hit.GetComponent<IDamageable>();
-
-            if (targetColorEntity == null)
-            {
-                Debug.Log($"❌ {hit.gameObject.name} NO tiene IColorEntity");
-                continue;
-            }
-            if (damageable == null)
-            {
-                Debug.Log($"❌ {hit.gameObject.name} NO tiene IDamageable");
-                continue;
-            }
-
-            Debug.Log($"🎨 Color del enemigo: {targetColorEntity.DColor}");
-            Debug.Log($"🎨 Color del jugador: {playerColor.DColor}");
-
-            if (targetColorEntity.DColor == playerColor.DColor)
-            {
-                Debug.Log($"❌ Mismo color, ignorando");
-                continue;
-            }
-
-            float multiplier = ColorEffectiveness.GetMultiplier(playerColor.DColor, targetColorEntity.DColor);
-            float finalDamage = totalDamage * multiplier;
-
-            Debug.Log($"💥 Aplicando {finalDamage} de daño (multiplicador: {multiplier})");
-            damageable.TakeDamage(finalDamage);
-        }
+    // Dibuja el rango de ataque en el editor al seleccionar el jugador.
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, rangoAtaque);
     }
 }
